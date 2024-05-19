@@ -3,12 +3,12 @@ pipeline {
         docker { image 'python:3.9-slim' }
     }
     environment {
-        FLASK_PORT = '8000'
+        FLASK_PORT = '5000'
     }
     stages {
         stage('Clone repository') {
             steps {
-                git 'https://github.com/Teramirka/testingapp'
+                git 'https://github.com/Teramirka/testingapp.git'
             }
         }
         stage('Build') {
@@ -21,7 +21,7 @@ pipeline {
         stage('Test') {
             steps {
                 sh 'echo "Running tests..."'
-                // Here we put our tests I currently don't have
+                // Здесь вы можете добавить команды для запуска тестов
             }
         }
         stage('Deploy') {
