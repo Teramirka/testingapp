@@ -5,7 +5,7 @@ services:
     build: ./app
     container_name: blog_app
     ports:
-      - "8000:8000"
+      - "5000:5000"
     networks:
       - blog_network
 
