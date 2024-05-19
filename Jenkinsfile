@@ -1,14 +1,12 @@
 pipeline {
-    agent {
-        docker { image 'python:3.9-slim' }
-    }
+    agent any
     environment {
         FLASK_PORT = '5000'
     }
     stages {
         stage('Clone repository') {
             steps {
-                git 'https://github.com/Teramirka/testingapp.git'
+                git branch: 'master', url: 'https://github.com/Teramirka/testingapp.git'
             }
         }
         stage('Build') {
@@ -30,15 +28,16 @@ pipeline {
                     docker.withRegistry('https://registry.hub.docker.com', 'dockerhub_credentials') {
                         docker.image('blog_app').push('latest')
                     }
-                    docker-compose.down()
-                    docker-compose.up('-d')
+                    sh 'docker-compose down && docker-compose up -d'
                 }
             }
         }
     }
     post {
         always {
-            cleanWs()
+            node {
+                cleanWs()
+            }
         }
     }
 }
