@@ -1,5 +1,7 @@
+
+
 pipeline {
-    agent any
+    agent { label 'docker' }
     environment {
         FLASK_PORT = '5000'
     }
@@ -25,7 +27,7 @@ pipeline {
         stage('Deploy') {
             steps {
                 script {
-                    docker.withRegistry('https://registry.hub.docker.com', 'dockerhub_credentials') {
+                    docker.withRegistry('https://registry.hub.docker.com', 'docker-hub-credentials') {
                         docker.image('blog_app').push('latest')
                     }
                     sh 'docker-compose down && docker-compose up -d'
@@ -35,9 +37,8 @@ pipeline {
     }
     post {
         always {
-            node('docker') {
-                cleanWs()
-            }
+            cleanWs()
         }
     }
 }
+
