@@ -19,7 +19,7 @@ pipeline {
         stage('Test') {
             steps {
                 sh 'echo "Running tests..."'
-                // Здесь вы можете добавить команды для запуска тестов
+                // Tests here
             }
         }
         stage('Deploy') {
@@ -35,7 +35,7 @@ pipeline {
     }
     post {
         always {
-            node {
+            node('docker') {
                 cleanWs()
             }
         }
