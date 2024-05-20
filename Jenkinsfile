@@ -7,7 +7,6 @@ pipeline {
     }
     environment {
         FLASK_PORT = '5000'
-        DOCKERHUB_CREDENTIALS=credentials('docker-hub-credentials')
     }
     stages {
         stage('Clone repository') {
@@ -31,19 +30,14 @@ pipeline {
                 //  test commands here
             }
          }
-
-        stage('Login') {
-            steps {
-                sh 'echo $DOCKERHUB_CREDENTIALS | docker login -u $DOCKERHUB_CREDENTIALS --password-stdin'
-            }
-        
-         }
     
         stage('Deploy') {
             steps {
-                sh 'docker push teramir/blog_app:latest'
-                sh 'docker-compose version' 
-                sh 'docker-compose down && docker-compose up -d'
+                withCredentials([usernamePassword(credentialsId: 'docker-hub-credentials', passwordVariable: 'docker-hub-credentialsPassword', usernameVariable: 'docker-hub-credentialsUser')]) {
+                  sh "docker login -u ${env.docker-hub-credentialsUser} -p ${env.docker-hub-credentialsPassword}"
+                  sh 'docker push teramir/spring-petclinic:latest'
+                  sh 'docker-compose version' 
+                  sh 'docker-compose down && docker-compose up -d'
                 }
             }
          }
