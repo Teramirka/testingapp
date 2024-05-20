@@ -45,7 +45,9 @@ pipeline {
       }
     post {
         always {
-            sh 'docker logout'
-            cleanWs()
+            catchError {
+                sh 'docker logout'
+                cleanWs()
+            }
         }
      }
