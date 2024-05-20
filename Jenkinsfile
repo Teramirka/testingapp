@@ -20,7 +20,7 @@ pipeline {
             steps {
                 script {
                     sh 'docker info' 
-                    sh 'docker build -t teramir/blog_app:latest ./app/Dockerfile'
+                    sh 'docker build -t teramir/blog_app:latest ./app/'
                 }
             }
          }
