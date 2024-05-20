@@ -7,6 +7,9 @@ pipeline {
     }
     environment {
         FLASK_PORT = '5000'
+        registry = "teramir/app_blog" 
+        registryCredential = 'docker-hub-credentials' 
+        dockerImage = '' 
     }
     stages {
         stage('Clone repository') {
@@ -19,7 +22,7 @@ pipeline {
             steps {
                 script {
                     sh 'docker info' 
-                    sh 'docker build -t teramir/blog_app:latest ./app/'
+                    dockerImage = docker.build registry + ":$BUILD_NUMBER"
                 }
             }
          }
@@ -33,11 +36,10 @@ pipeline {
     
         stage('Deploy') {
             steps {
-                withCredentials([usernamePassword(credentialsId: 'docker-hub-credentials', passwordVariable: 'docker-hub-credentialsPassword', usernameVariable: 'docker-hub-credentialsUser')]) {
-                  sh "docker login -u ${env.docker-hub-credentialsUser} -p ${env.docker-hub-credentialsPassword}"
-                  sh 'docker push teramir/spring-petclinic:latest'
-                  sh 'docker-compose version' 
-                  sh 'docker-compose down && docker-compose up -d'
+                script { 
+                    docker.withRegistry( '', registryCredential ) { 
+                        dockerImage.push() 
+                    }
                 }
             }
          }
