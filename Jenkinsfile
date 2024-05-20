@@ -1,7 +1,10 @@
-
-
 pipeline {
-    agent { label 'docker' }
+    agent {
+        docker {
+            image 'docker:stable' // Use the Docker image for running Docker commands
+            args '-v /var/run/docker.sock:/var/run/docker.sock' // Mount Docker socket
+        }
+    }
     environment {
         FLASK_PORT = '5000'
     }
@@ -21,7 +24,7 @@ pipeline {
         stage('Test') {
             steps {
                 sh 'echo "Running tests..."'
-                // Tests here
+                //  test commands here
             }
         }
         stage('Deploy') {
@@ -41,4 +44,3 @@ pipeline {
         }
     }
 }
-
