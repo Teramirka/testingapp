@@ -6,7 +6,7 @@ services:
     container_name: blog_app
     ports:
       - "5000:5000"
-    expose: 
+    expose:
       - "5000"
     networks:
       - blog_network
@@ -24,6 +24,7 @@ services:
   jenkins:
     build: ./jenkins
     container_name: blog_jenkins
+    user: root
     ports:
       - "8080:8080"
       - "50000:50000"
