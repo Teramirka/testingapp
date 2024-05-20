@@ -39,7 +39,6 @@ pipeline {
                     sh 'docker tag blog_app $DOCKERHUB_USR/blog_app:latest'
                     sh 'docker push $DOCKERHUB_USR/blog_app:latest'
                     }
-                sh 'docker-compose down && docker-compose up -d'
                 }
             }
          }
