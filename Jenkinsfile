@@ -23,21 +23,21 @@ pipeline {
                     sh 'docker built -t teramir/blog_app:latest app/Dockerfile'
                 }
             }
-        }
+         }
 
         stage('Test') {
             steps {
                 sh 'echo "Running tests..."'
                 //  test commands here
             }
-        }
+         }
 
         stage('Login') {
             steps {
                 sh 'echo $DOCKERHUB_CREDENTIALS | docker login -u $DOCKERHUB_CREDENTIALS --password-stdin'
             }
         
-        }
+         }
     
         stage('Deploy') {
             steps {
@@ -46,7 +46,7 @@ pipeline {
                 sh 'docker-compose down && docker-compose up -d'
                 }
             }
-        }
+         }
     }
     post {
         always {
@@ -54,4 +54,3 @@ pipeline {
             cleanWs()
         }
     }
-}
