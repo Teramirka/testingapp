@@ -1,8 +1,8 @@
 pipeline {
     agent {
         docker {
-            image 'docker:stable' // Use the Docker image for running Docker commands
-            args '-v /var/run/docker.sock:/var/run/docker.sock' // Mount Docker socket
+            image 'docker:stable' 
+            args '-v /var/run/docker.sock:/var/run/docker.sock' 
         }
     }
     environment {
@@ -12,15 +12,18 @@ pipeline {
         stage('Clone repository') {
             steps {
                 git branch: 'master', url: 'https://github.com/Teramirka/testingapp.git'
+                sh 'ls -al'
             }
         }
         stage('Build') {
             steps {
                 script {
+                    sh 'docker info' 
                     docker.build('blog_app', '-f app/Dockerfile app')
                 }
             }
         }
+
         stage('Test') {
             steps {
                 sh 'echo "Running tests..."'
@@ -33,6 +36,7 @@ pipeline {
                     docker.withRegistry('https://registry.hub.docker.com', 'docker-hub-credentials') {
                         docker.image('blog_app').push('latest')
                     }
+                    sh 'docker-compose version' 
                     sh 'docker-compose down && docker-compose up -d'
                 }
             }
