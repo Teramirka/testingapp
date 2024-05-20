@@ -7,5 +7,6 @@ RUN apt-get update && \
     apt-get update && \
     apt-get install -y docker-ce-cli
 RUN groupadd -f docker && \
-    usermod -aG docker jenkins
+    usermod -aG docker jenkins && \
+    newgrp docker
 USER jenkins
