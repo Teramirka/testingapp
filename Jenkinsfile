@@ -7,9 +7,7 @@ pipeline {
     }
     environment {
         FLASK_PORT = '5000'
-        registry = "teramir/app_blog" 
-        registryCredential = 'docker-hub-credentials' 
-        dockerImage = '' 
+        DOCKERHUB = credentials('docker-hub-credentials')
     }
     stages {
         stage('Clone repository') {
@@ -22,7 +20,7 @@ pipeline {
             steps {
                 script {
                     sh 'docker info' 
-                    dockerImage = docker.build registry + ":$BUILD_NUMBER"
+                    sh 'docker build -t blog_app -f app/Dockerfile app'
                 }
             }
          }
@@ -37,9 +35,11 @@ pipeline {
         stage('Deploy') {
             steps {
                 script { 
-                    docker.withRegistry( '', registryCredential ) { 
-                        dockerImage.push() 
+                    sh 'docker login -u $DOCKERHUB_USR -p $DOCKERHUB_PSW'
+                    sh 'docker tag blog_app $DOCKERHUB_USR/blog_app:latest'
+                    sh 'docker push $DOCKERHUB_USR/blog_app:latest'
                     }
+                sh 'docker-compose down && docker-compose up -d'
                 }
             }
          }
