@@ -7,6 +7,7 @@ pipeline {
     }
     environment {
         FLASK_PORT = '5000'
+        DOCKERHUB_CREDENTIALS=credentials('docker-hub-credentials')
     }
     stages {
         stage('Clone repository') {
@@ -19,7 +20,7 @@ pipeline {
             steps {
                 script {
                     sh 'docker info' 
-                    docker.build('blog_app', '-f app/Dockerfile app')
+                    sh 'docker built -t teramir/blog_app:latest app/Dockerfile'
                 }
             }
         }
@@ -30,20 +31,26 @@ pipeline {
                 //  test commands here
             }
         }
+
+        stage('Login') {
+            steps {
+                sh 'echo $DOCKERHUB_CREDENTIALS | docker login -u $DOCKERHUB_CREDENTIALS --password-stdin'
+            }
+        
+        }
+    
         stage('Deploy') {
             steps {
-                script {
-                    docker.withRegistry('https://registry.hub.docker.com', 'docker-hub-credentials') {
-                        docker.image('blog_app').push('latest')
-                    }
-                    sh 'docker-compose version' 
-                    sh 'docker-compose down && docker-compose up -d'
+                sh 'docker push teramir/blog_app:latest'
+                sh 'docker-compose version' 
+                sh 'docker-compose down && docker-compose up -d'
                 }
             }
         }
     }
     post {
         always {
+            sh 'docker logout'
             cleanWs()
         }
     }
