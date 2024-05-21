@@ -5,6 +5,9 @@ pipeline {
             args '-v /var/run/docker.sock:/var/run/docker.sock' 
         }
     }
+    options {
+        buildDiscarder(logRotator(numToKeepStr: '20'))
+    }
     environment {
         FLASK_PORT = '5000'
         DOCKERHUB = credentials('docker-hub-credentials')
