@@ -38,9 +38,15 @@ pipeline {
                     sh 'docker login -u $DOCKERHUB_USR -p $DOCKERHUB_PSW'
                     sh 'docker tag blog_app $DOCKERHUB_USR/blog_app:latest'
                     sh 'docker push $DOCKERHUB_USR/blog_app:latest'
+                    try {
+                        sh 'docker-compose down && docker-compose up -d'
+                    } catch (Exception e) {
+                        echo "Deployment failed: ${e.getMessage()}"
+                    } finally {
+                        echo "Deployment stage completed."
                     }
                 }
             }
          }
       }
-   
+}
